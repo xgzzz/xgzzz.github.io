@@ -1,1 +1,38 @@
-个人网站
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mail</title>
+    <link rel="stylesheet" href="main.css">
+    <script src="form.js"></script>
+</head>
+<body>
+
+<form action="" method="post">
+    <div><label><span>会员名：</span><input type="text" name="username" id="user"></label>
+        <b style="display: none;" id="count">0个字符</b>
+    <p class="msg"><i class="ati"></i>5-25个字符，一个汉字为两个字符，推荐使用中文会员名</p>
+    </div>
+
+
+    <div>
+    <label><span>登录密码：</span><input type="password" name="pwd" id="pwd1"></label>
+        <p><i class="ati">5-25个字符，一个汉字为两个字符，推荐使用中文会员名</i></p>
+    </div>
+    <div class="box"><em class="active">弱</em><em>中</em><em>强</em></div>
+
+<div>
+    <label><span>确认密码：</span><input type="password" name="pwd2" id="pwd2" disabled="" class="text" ></label>
+    <p class="msg">再次确认密码</p>
+</div>
+    <div><label><span>验证码：</span><input type="text" class="test" name="submit"></label></div>
+    <input type="submit" value="同意协议并注册">
+
+</form>
+
+
+
+
+
+</body>
+</html>

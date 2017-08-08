@@ -1,0 +1,62 @@
+
+article,aside,blockquote,body,dd,dl,dt,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,
+h5,h6,header,hgroup,legend,li,menu,nav,ol,p,pre,section,table,td,th,ul{margin:0;padding:0}
+
+form{
+    width: 1000px;
+    height: 600px;
+    background-color: palegoldenrod;
+    border: 1px solid #000;
+    margin: 100px auto;
+    box-sizing: border-box;
+    padding-top: 30px;
+}
+div{
+    margin-bottom: 30px;
+    overflow: hidden;
+    clear: both;
+}
+div span{
+    display: inline-block;
+    width: 120px;
+    height: 30px;
+    margin-left: 30px;
+    text-align: right;
+    font-size: 20px;
+
+}
+div input{
+    width: 300px;
+    height: 30px;
+}
+div p{
+    font-size: 16px;
+    margin-top: 10px;
+    margin-left: 150px;
+    display: none;
+}
+.box{
+    display: block;
+    margin-left: 150px;
+}
+.box em{
+    display: inline-block;
+    width: 80px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    background-color: #ffda06;
+}
+.box .active{
+    background-color: orange;
+}
+form div .test{
+    width: 80px;
+    height: 30px;
+}
+ form input[type='submit']{
+     margin-left: 200px;
+     width: 150px;
+     height: 30px;
+     background-color: #ffa500;
+ }
