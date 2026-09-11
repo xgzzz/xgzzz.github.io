@@ -20,4 +20,6 @@ features:
     details: 文章就是 .md 文件，写完 push 一下，网站自动更新。
   - title: 零成本
     details: 源码放 Gitee，构建托管交给 EdgeOne Makers，一分钱不花。
+  - title: 全文搜索
+    details: 站内本地搜索，不依赖任何第三方服务，完全离线可用。
 ---
