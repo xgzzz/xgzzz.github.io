@@ -1,0 +1,60 @@
+name: 构建并部署 VitePress 到 GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+        with:
+          # lastUpdated 需要完整的 git 历史才能取到每篇文档的真实提交时间
+          fetch-depth: 0
+
+      - name: 安装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 配置 Pages
+        uses: actions/configure-pages@v5
+
+      - name: 安装依赖
+        run: |
+          # package-lock.json 里的下载地址指向 registry.npmmirror.com（国内镜像），
+          # GitHub 构建机在美国，直接拉会很慢。下面两行把它改回官方源。
+          npm config set registry https://registry.npmjs.org
+          npm config set replace-registry-host always
+          npm ci
+
+      - name: 构建站点
+        run: npm run build
+
+      - name: 上传构建产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/.vitepress/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

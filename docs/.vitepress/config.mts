@@ -71,7 +71,7 @@ export default defineConfig({
       }
     },
     footer: {
-      message: '基于 VitePress 构建 · 源码托管于 Gitee',
+      message: '基于 VitePress 构建 · 源码托管于 Gitee / GitHub',
       copyright: 'Copyright © 2026-present xg-zhang'
     }
   }
