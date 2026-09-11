@@ -22,7 +22,7 @@ export default defineConfig({
       { text: '文章', link: '/posts/' },
       { text: '关于', link: '/about' },
       { text: 'Gitee', link: 'https://gitee.com/xg-zhang' },
-      { text: 'GitHub', link: 'https://github.com/xgzzz' }
+      { text: 'GitHub', link: 'https://github.com/xg-zhang' }
     ],
     sidebar: [
       {
