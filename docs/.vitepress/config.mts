@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import tailwindcss from '@tailwindcss/vite'
 
 // 部署在根路径（如 https://xxx.edgeone.dev/）时保持 base: '/'
 // 部署在子路径（如 https://example.com/blog/）时改成 '/blog/'
@@ -21,6 +22,8 @@ export default defineConfig({
       { text: '首页', link: '/' },
       { text: '文章', link: '/posts/' },
       { text: '关于', link: '/about' },
+      // Tailwind 示例页，照着写完新页面后可以把这一项和 docs/demo.md 一起删掉
+      { text: '示例', link: '/demo' },
       { text: 'Gitee', link: 'https://gitee.com/xg-zhang' },
       { text: 'GitHub', link: 'https://github.com/xgzzz' }
     ],
@@ -75,5 +78,8 @@ export default defineConfig({
       message: '基于 VitePress 构建 · 源码托管于 Gitee / GitHub',
       copyright: 'Copyright © 2026-present xg-zhang'
     }
+  },
+  vite: {
+    plugins: [tailwindcss()]
   }
 })

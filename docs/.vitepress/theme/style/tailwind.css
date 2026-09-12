@@ -1,0 +1,68 @@
+/**
+ * Tailwind CSS v4 入口
+ *
+ * 两个刻意的设计，都是为了让 Tailwind 在 VitePress 里真正生效：
+ *
+ * 1. 没有写 `@import 'tailwindcss';`
+ *    简写会额外注入 preflight（基于 modern-normalize 的基础重置），
+ *    它会清零标题、列表、图片的默认样式，破坏 VitePress 的文章排版（.vp-doc）。
+ *    这里只导入 theme（设计令牌）+ utilities（工具类）。
+ *
+ * 2. 没有写 `@layer theme, base, components, utilities;`
+ *    VitePress 默认主题的样式全部是「未分层样式」，而 CSS 级联规则是
+ *    「未分层 > 分层」。一旦把 utilities 放进 @layer utilities，
+ *    你写的 class 就会被 .vp-doc h2 这类规则盖掉而不生效。
+ *    不声明层 + 本文件在默认主题之后加载，Tailwind 才能正常覆盖。
+ */
+@import 'tailwindcss/theme.css';
+@import 'tailwindcss/utilities.css';
+
+/**
+ * VitePress 通过 <html class="dark"> 手动切换深色，
+ * 而 Tailwind 的 dark: 默认跟随系统 prefers-color-scheme。
+ * 这一行让 dark: 跟随站点开关，否则切深色时组件样式不会跟着变。
+ */
+@variant dark (.dark &);
+
+/**
+ * 把 VitePress 的 CSS 变量映射成 Tailwind 颜色，
+ * 之后可直接写 border-border / bg-bg-soft / text-text1，
+ * 并且自动适配深浅色，不必再逐个补 dark: 变体。
+ */
+@theme {
+  --color-bg: var(--vp-c-bg);
+  --color-bg-alt: var(--vp-c-bg-alt);
+  --color-bg-soft: var(--vp-c-bg-soft);
+  --color-text1: var(--vp-c-text-1);
+  --color-text2: var(--vp-c-text-2);
+  --color-text3: var(--vp-c-text-3);
+  --color-border: var(--vp-c-border);
+  --color-divider: var(--vp-c-divider);
+  --color-brand: var(--vp-c-brand-1);
+  --color-brand-soft: var(--vp-c-brand-soft);
+}
+
+/**
+ * 自定义页面（layout: page 等不在 .vp-doc 内的页面）没有 preflight 兜底，
+ * 给根容器加 class="vp-tw" 即可消除浏览器默认样式的干扰。
+ * 写在 markdown 里的组件本身受 .vp-doc 排版约束，不需要加。
+ */
+@layer base {
+  .vp-tw :where(h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote, dl, dd) {
+    margin: 0;
+  }
+  .vp-tw :where(ul, ol) {
+    padding: 0;
+    list-style: none;
+  }
+  .vp-tw :where(img, svg, video) {
+    display: block;
+    max-width: 100%;
+  }
+  .vp-tw :where(button) {
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+}
