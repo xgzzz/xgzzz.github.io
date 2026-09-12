@@ -1,6 +1,10 @@
 ---
 title: 从零搭建 VitePress 博客并自动部署
 date: 2026-09-12
+tags:
+  - VitePress
+  - 建站
+  - 部署
 ---
 
 # 从零搭建 VitePress 博客并自动部署

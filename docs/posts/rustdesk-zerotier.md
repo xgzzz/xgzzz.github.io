@@ -1,6 +1,10 @@
 ---
 title: RustDesk 与 ZeroTier 搭建自用服务器
 date: 2026-09-12
+tags:
+  - RustDesk
+  - ZeroTier
+  - 自建服务
 ---
 
 # RustDesk 与 ZeroTier 搭建自用服务器

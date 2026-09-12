@@ -1,6 +1,9 @@
 ---
 title: 用 VitePress 写博客
 date: 2026-09-11
+tags:
+  - VitePress
+  - 建站
 ---
 
 # 用 VitePress 写博客
