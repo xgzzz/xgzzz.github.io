@@ -5,6 +5,7 @@ aside: false
 
 # 全部文章
 
+- [从零搭建 VitePress 博客并自动部署](/posts/build-vitepress-blog) — 2026-09-12
 - [Hello World](/posts/hello-world) — 2026-09-11
 - [用 VitePress 写博客](/posts/vitepress-blog) — 2026-09-11
 

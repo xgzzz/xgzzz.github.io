@@ -32,6 +32,7 @@ export default defineConfig({
         text: '文章',
         items: [
           { text: '全部文章', link: '/posts/' },
+          { text: '从零搭建 VitePress 博客', link: '/posts/build-vitepress-blog' },
           { text: 'Hello World', link: '/posts/hello-world' },
           { text: '用 VitePress 写博客', link: '/posts/vitepress-blog' }
         ]
