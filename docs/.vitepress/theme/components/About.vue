@@ -14,17 +14,19 @@ const profile = {
   bio: '一名正在成长中的开发者。这里记录我踩过的坑、学到的东西，以及偶尔冒出来的一些想法。写得慢，但会一直写下去。',
   meta: [
     { icon: 'pin', text: '中国', link: '' },
-    { icon: 'mail', text: 'you@example.com', link: 'mailto:you@example.com' }
+    { icon: 'mail', text: 'xgzhang0626@gmail.com', link: 'mailto:xgzhang0626@gmail.com' }
   ],
   links: [
     { icon: 'github', label: 'GitHub', url: 'https://github.com/xgzzz' },
     { icon: 'globe', label: 'Gitee', url: 'https://gitee.com/xg-zhang' },
-    { icon: 'mail', label: '邮箱', url: 'mailto:you@example.com' }
+    { icon: 'mail', label: '邮箱', url: 'mailto:xgzhang0626@gmail.com' }
   ],
+  // 本站实际使用的技术栈
   skills: [
-    { title: '前端', items: ['Vue', 'TypeScript', 'Vite', 'CSS'] },
-    { title: '后端', items: ['Node.js', 'MySQL'] },
-    { title: '工具', items: ['Git', 'Linux', 'Docker'] }
+    { title: '站点', items: ['VitePress', 'Vue 3', 'Vite'] },
+    { title: '语言', items: ['TypeScript', 'Markdown', 'CSS'] },
+    { title: '样式', items: ['Tailwind CSS v4'] },
+    { title: '工程', items: ['Node.js', 'Git', 'GitHub Actions'] }
   ],
   timeline: [
     { time: '2026', title: '搭起 BearCookie 博客', desc: 'VitePress + GitHub Actions + Pages，零成本上线。' },
