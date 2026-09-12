@@ -20,8 +20,12 @@ function enhance() {
   )
 
   blocks.forEach((block) => {
-    if (block.dataset.enhanced) return
-    block.dataset.enhanced = 'true'
+    // 先清理本次会注入的元素。
+    // 用清理代替「已处理」标记，保证 HMR 或重复执行时不会叠加出多个按钮。
+    block
+      .querySelectorAll('.code-lang, .code-copy, .code-toggle')
+      .forEach((el) => el.remove())
+    block.classList.remove('code-block--collapsed')
 
     // 语言标签
     const langClass = Array.from(block.classList).find((c) =>
@@ -35,31 +39,38 @@ function enhance() {
     }
 
     // 一键复制
-    const copyBtn = document.createElement('button')
-    copyBtn.className = 'code-copy'
-    copyBtn.type = 'button'
-    copyBtn.textContent = '复制'
-    copyBtn.addEventListener('click', async () => {
-      const code = block.querySelector('code')?.textContent ?? ''
-      try {
-        await navigator.clipboard.writeText(code)
-      } catch {
-        // 非 HTTPS 或旧浏览器下回退
-        const textarea = document.createElement('textarea')
-        textarea.value = code
-        document.body.appendChild(textarea)
-        textarea.select()
-        document.execCommand('copy')
-        textarea.remove()
-      }
-      copyBtn.textContent = '已复制'
-      copyBtn.classList.add('copied')
-      setTimeout(() => {
-        copyBtn.textContent = '复制'
-        copyBtn.classList.remove('copied')
-      }, 1600)
-    })
-    block.appendChild(copyBtn)
+    // 若代码块里已经有别的按钮（某些浏览器扩展会注入复制按钮），就不再重复添加
+    const hasOtherButton = Array.from(block.querySelectorAll('button')).some(
+      (btn) => !btn.classList.contains('code-copy')
+    )
+
+    if (!hasOtherButton) {
+      const copyBtn = document.createElement('button')
+      copyBtn.className = 'code-copy'
+      copyBtn.type = 'button'
+      copyBtn.textContent = '复制'
+      copyBtn.addEventListener('click', async () => {
+        const code = block.querySelector('code')?.textContent ?? ''
+        try {
+          await navigator.clipboard.writeText(code)
+        } catch {
+          // 非 HTTPS 或旧浏览器下回退
+          const textarea = document.createElement('textarea')
+          textarea.value = code
+          document.body.appendChild(textarea)
+          textarea.select()
+          document.execCommand('copy')
+          textarea.remove()
+        }
+        copyBtn.textContent = '已复制'
+        copyBtn.classList.add('copied')
+        setTimeout(() => {
+          copyBtn.textContent = '复制'
+          copyBtn.classList.remove('copied')
+        }, 1600)
+      })
+      block.appendChild(copyBtn)
+    }
 
     // 长代码块折叠
     const pre = block.querySelector('pre')
