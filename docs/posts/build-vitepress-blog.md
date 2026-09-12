@@ -16,6 +16,10 @@ date: 2026-09-12
 - 站内全文搜索（本地索引，离线可用）
 - 深浅色主题切换
 - 自定义主题组件 + Tailwind CSS
+- 文章列表与侧边栏自动生成，新增文章只需丢一个 `.md`
+- Giscus 评论（基于 GitHub Discussions，免费无广告）
+- SEO：sitemap、canonical、Open Graph 分享卡片
+- 访问统计
 - 源码同时托管 Gitee 与 GitHub
 
 **技术栈**：VitePress 1.6 · Vue 3 · Vite 5 · TypeScript · Tailwind CSS v4 · Node.js 22 · GitHub Actions
@@ -180,7 +184,7 @@ date: 2026-09-12
 1. **文件名就是 URL**。`docs/posts/hello-world.md` 对应 `/posts/hello-world`
 2. 文件名尽量用英文加连字符，中文路径在部分平台会有编码问题
 
-新增文章后，记得同步两处（目前是手工的）：`docs/posts/index.md` 的列表，以及 `config.mts` 的 `sidebar`。
+新增文章后，`docs/posts/index.md` 的列表和 `config.mts` 的 `sidebar` 也要跟着更新。手工改两处容易忘，第十二节会把它改成自动生成。
 
 ## 八、自定义主题
 
@@ -419,16 +423,340 @@ scroll-margin-top: calc(var(--vp-nav-height) + 24px);
 
 VitePress 构建前会清空输出目录，某些环境（比如开了安全删除策略的 IDE）会拦截这个操作。这是环境问题，CI 上不受影响。手动删掉 `dist` 再构建即可。
 
-## 还能做什么
+## 十二、进阶优化
 
-目前几处可以再优化：
+跑起来之后，还有几件事能明显提升体验。下面是本站已经实装的做法，可以照着加。
 
-- **自动生成侧边栏和文章列表**：现在新增文章要改两个地方，写个脚本扫描 `docs/posts/` 自动生成更省心
-- **评论系统**：接 Giscus（基于 GitHub Discussions，免费无广告）
-- **SEO**：加 `sitemap`、`og:image`、canonical 链接
-- **访问统计**：不蒜子或 Vercount
+### 12.1 自动生成侧边栏和文章列表
 
-先把博客跑起来，这些都可以慢慢加。
+前面说过，新增文章要同时改列表和侧边栏两处，很容易忘。这里把它们都改成自动的。
+
+**侧边栏**：`config.mts` 是跑在 Node 里的，可以直接读文件系统。新建 `docs/.vitepress/utils/posts.ts`：
+
+```ts
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const postsDir = fileURLToPath(new URL('../../posts', import.meta.url))
+
+/** 极简 frontmatter 解析，只取 key: value，够用且不用装依赖 */
+function parseFrontmatter(raw: string): Record<string, string> {
+  const matched = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)
+  if (!matched) return {}
+
+  const result: Record<string, string> = {}
+  for (const line of matched[1].split(/\r?\n/)) {
+    const kv = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/)
+    if (kv) result[kv[1]] = kv[2].replace(/^['"]|['"]$/g, '').trim()
+  }
+  return result
+}
+
+export function createPostsSidebar() {
+  const files = fs
+    .readdirSync(postsDir)
+    .filter((file) => file.endsWith('.md') && file !== 'index.md')
+
+  const posts = files
+    .map((file) => {
+      const frontmatter = parseFrontmatter(fs.readFileSync(path.join(postsDir, file), 'utf-8'))
+      const slug = file.replace(/\.md$/, '')
+      return {
+        text: frontmatter.title || slug,
+        link: `/posts/${slug}`,
+        date: frontmatter.date || ''
+      }
+    })
+    .sort((a, b) => (a.date < b.date ? 1 : -1))
+
+  return [
+    {
+      text: '文章',
+      items: [
+        { text: '全部文章', link: '/posts/' },
+        ...posts.map(({ text, link }) => ({ text, link }))
+      ]
+    }
+  ]
+}
+```
+
+然后 `config.mts` 里一行搞定：
+
+```ts
+sidebar: [
+  ...createPostsSidebar(),
+  { text: '关于', items: [{ text: '关于我', link: '/about' }] }
+]
+```
+
+只取 `title` 和 `date`，正则足够了，不必为此引入 `gray-matter`。
+
+**文章列表**：用 VitePress 官方的 data loader，构建时读取全部文章。新建 `docs/.vitepress/theme/posts.data.ts`：
+
+```ts
+import { createContentLoader } from 'vitepress'
+
+export interface Post {
+  title: string
+  date: string
+  url: string
+}
+
+declare const data: Post[]
+export { data }
+
+export default createContentLoader('posts/*.md', {
+  transform(raw): Post[] {
+    return raw
+      // posts/index.md 是列表页本身，排除掉
+      .filter(({ url }) => url !== '/posts/')
+      .map(({ url, frontmatter }) => ({
+        title: frontmatter.title || url,
+        // YAML 会把 2026-09-12 解析成 Date，统一转回字符串
+        date:
+          frontmatter.date instanceof Date
+            ? frontmatter.date.toISOString().slice(0, 10)
+            : String(frontmatter.date ?? ''),
+        url
+      }))
+      .sort((a, b) => (a.date < b.date ? 1 : -1))
+  }
+})
+```
+
+::: tip 日期的坑
+YAML 里写的 `2026-09-12` 会被解析成 `Date` 对象而不是字符串，直接排序或渲染会得到一长串 UTC 时间。转换时统一用 `toISOString().slice(0, 10)`，避免时区偏移导致差一天。
+:::
+
+列表组件 `PostList.vue`：
+
+```vue
+<script setup lang="ts">
+import { data as posts } from '../posts.data'
+</script>
+
+<template>
+  <div class="mt-2">
+    <a
+      v-for="post in posts"
+      :key="post.url"
+      :href="post.url"
+      class="group flex items-baseline justify-between gap-4 border-b border-border py-3 hover:border-brand"
+    >
+      <span class="text-[15px] font-medium text-text1 group-hover:text-brand">
+        {{ post.title }}
+      </span>
+      <span class="shrink-0 font-mono text-[13px] text-text3">{{ post.date }}</span>
+    </a>
+  </div>
+</template>
+```
+
+`docs/posts/index.md` 里放一个 `<PostList />` 就行。
+
+::: tip 为什么颜色类写在 span 上
+外层的 `a` 会命中 `.vp-doc a` 的样式，颜色类直接写在 `a` 上会被盖掉（第九节讲过的特异性和级联层问题）。挪到内层 `span` 就没事了。
+:::
+
+这样一来，新增文章真的只剩「丢一个 .md 进去」这一步。
+
+::: warning dev 模式下要重启一下
+侧边栏是在 config 加载时扫描生成的，而 VitePress 只在 config 文件变化时才重新加载它。所以本地 `npm run dev` 时，新增 `.md` 之后**需要重启 dev server** 才能在侧边栏看到新文章。
+
+文章列表走的是 data loader，支持热更新，不受影响；生产构建每次都会重新加载 config，也不受影响。
+:::
+
+### 12.2 评论系统：Giscus
+
+基于 GitHub Discussions，免费、无广告、评论数据存在自己的仓库里。
+
+```bash
+npm i @giscus/vue
+```
+
+**启用三步**：
+
+1. 仓库 Settings → Features 勾选 **Discussions**
+2. 打开 https://giscus.app/zh-CN 填仓库名，页面会自动生成 `repoId` 和 `categoryId`（同时会引导你安装 giscus App 授权）
+3. 把值填进配置
+
+我习惯把这类配置集中放一个文件，改起来不用翻代码。新建 `docs/.vitepress/site.config.ts`：
+
+```ts
+export const SITE = {
+  /** 站点正式地址，用于 sitemap / canonical / og:url，末尾不要带斜杠 */
+  hostname: 'https://xgzzz.github.io',
+
+  giscus: {
+    repo: 'xgzzz/xgzzz.github.io',
+    repoId: '',
+    category: 'Announcements',
+    categoryId: '',
+    lang: 'zh-CN'
+  },
+
+  vercount: true
+}
+```
+
+组件 `Comment.vue`：
+
+```vue
+<script setup lang="ts">
+import Giscus from '@giscus/vue'
+import { useData } from 'vitepress'
+import { SITE } from '../../site.config'
+
+const { isDark } = useData()
+</script>
+
+<template>
+  <div class="vp-tw mt-12 border-t border-border pt-8">
+    <h2 class="mb-4 text-base font-semibold text-text1">评论</h2>
+    <Giscus
+      :repo="SITE.giscus.repo"
+      :repo-id="SITE.giscus.repoId"
+      :category="SITE.giscus.category"
+      :category-id="SITE.giscus.categoryId"
+      mapping="pathname"
+      input-position="bottom"
+      loading="lazy"
+      :theme="isDark ? 'dark' : 'light'"
+      :lang="SITE.giscus.lang"
+    />
+  </div>
+</template>
+```
+
+主题用 `isDark` 绑定，站点切深色时评论框跟着变。
+
+最后挂到文章页。`theme/index.ts` 里用 `doc-after` 插槽：
+
+```ts
+import { h } from 'vue'
+import PostFooter from './components/PostFooter.vue'
+
+export default {
+  extends: DefaultTheme,
+  Layout() {
+    return h(DefaultTheme.Layout, null, {
+      'doc-after': () => h(PostFooter)
+    })
+  },
+  enhanceApp({ app }) {
+    app.component('PostList', PostList)
+  }
+}
+```
+
+`PostFooter.vue` 里判断路径，只在文章页显示（列表页和关于页不显示）：
+
+```vue
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useData } from 'vitepress'
+
+const { page } = useData()
+
+const isPost = computed(() => {
+  const path = page.value.relativePath
+  return path.startsWith('posts/') && path !== 'posts/index.md'
+})
+</script>
+
+<template>
+  <div v-if="isPost">
+    <VisitorStats />
+    <Comment />
+  </div>
+</template>
+```
+
+### 12.3 SEO
+
+三件事：sitemap、canonical、Open Graph。
+
+**sitemap**：VitePress 内置，配个 hostname 就行，构建后自动产出 `sitemap.xml`：
+
+```ts
+sitemap: {
+  hostname: SITE.hostname
+}
+```
+
+**canonical 与 og 标签**：用 `transformHead` 按页面动态注入：
+
+```ts
+transformHead({ page, pageData }) {
+  let path = page.replace(/\.md$/, '')
+  if (path === 'index') path = ''
+  else if (path.endsWith('/index')) path = `${path.slice(0, -'/index'.length)}/`
+
+  const url = `${SITE.hostname}/${path}`
+  const title = pageData.frontmatter.title || pageData.title
+  const description = pageData.frontmatter.description || pageData.description
+  const image = `${SITE.hostname}/og-image.png`
+
+  return [
+    ['link', { rel: 'canonical', href: url }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:url', content: url }],
+    ['meta', { property: 'og:title', content: title }],
+    ['meta', { property: 'og:description', content: description }],
+    ['meta', { property: 'og:image', content: image }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }]
+  ]
+}
+```
+
+路径那几行是为了把 `index.md` 还原成 `/`、`posts/index.md` 还原成 `/posts/`，跟 `cleanUrls` 的实际 URL 对上。
+
+**og:image**：放一张 1200×630 的图到 `docs/public/og-image.png`。`docs/public/` 下的文件会原样复制到产物根目录。
+
+::: tip og:image 的两个要求
+社交平台不认 SVG，必须是 png 或 jpg；1200×630 是各平台通用的尺寸。
+:::
+
+### 12.4 访问统计
+
+不蒜子是老牌方案，但偶尔不稳定。我用的是 Vercount，国内可访问，用法几乎一样：
+
+```vue
+<script setup lang="ts">
+import { onMounted } from 'vue'
+
+let injected = false
+
+function injectScript() {
+  if (injected || document.getElementById('vercount-script')) return
+  injected = true
+
+  const script = document.createElement('script')
+  script.id = 'vercount-script'
+  script.defer = true
+  script.src = 'https://events.vercount.one/js'
+  document.head.appendChild(script)
+}
+
+onMounted(injectScript)
+</script>
+
+<template>
+  <div class="flex gap-5 text-[13px] text-text3">
+    <span>总访问 <span id="vercount_value_site_pv">-</span></span>
+    <span>访客 <span id="vercount_value_site_uv">-</span></span>
+    <span>本页 <span id="vercount_value_page_pv">-</span></span>
+  </div>
+</template>
+```
+
+脚本用 `injected` 标记保证只注入一次，避免路由切换时重复加载。
+
+::: warning SPA 下的计数
+VitePress 是单页应用，站内跳转不会重新触发统计脚本，数字要刷新页面才更新。这是预期行为，不是坏了。
+:::
 
 ---
 

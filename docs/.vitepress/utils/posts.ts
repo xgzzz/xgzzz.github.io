@@ -5,6 +5,10 @@ import { fileURLToPath } from 'node:url'
 /**
  * 扫描 docs/posts/ 下的 Markdown，自动生成侧边栏。
  * 新增文章后不用再手动改 config.mts。
+ *
+ * 注意：扫描发生在 config 加载时。dev 模式下新增 .md 后，
+ * 需要重启 dev server 才能在侧边栏看到它（文章列表不受影响，它走
+ * data loader，支持热更新）。生产构建每次都重新加载 config，无此问题。
  */
 
 const postsDir = fileURLToPath(new URL('../../posts', import.meta.url))
