@@ -5,6 +5,9 @@ hero:
   name: BearCookie
   text: 记录学习与思考
   tagline: VitePress + GitHub Pages，零成本上线
+  image:
+    src: /panda-bike.svg
+    alt: 熊猫骑自行车
   actions:
     - theme: brand
       text: 开始阅读
