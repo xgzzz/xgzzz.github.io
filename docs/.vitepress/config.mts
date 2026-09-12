@@ -65,7 +65,6 @@ export default defineConfig({
       { text: '关于', link: '/about' },
       // Tailwind 示例页，照着写完新页面后可以把这一项和 docs/demo.md 一起删掉
       { text: '示例', link: '/demo' },
-      { text: 'Gitee', link: 'https://gitee.com/xg-zhang' },
       { text: 'GitHub', link: 'https://github.com/xgzzz' }
     ],
     // 扫描 docs/posts/ 自动生成，新增文章无需改这里
@@ -117,7 +116,7 @@ export default defineConfig({
       }
     },
     footer: {
-      message: '基于 VitePress 构建 · 源码托管于 Gitee / GitHub',
+      message: '基于 VitePress 构建 · 源码托管于GitHub',
       copyright: 'Copyright © 2026-present xg-zhang'
     }
   },
