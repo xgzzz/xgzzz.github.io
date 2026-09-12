@@ -1,5 +1,7 @@
 import { defineConfig } from 'vitepress'
 import tailwindcss from '@tailwindcss/vite'
+import { createPostsSidebar } from './utils/posts'
+import { SITE } from './site.config'
 
 // 部署在根路径（如 https://xxx.edgeone.dev/）时保持 base: '/'
 // 部署在子路径（如 https://example.com/blog/）时改成 '/blog/'
@@ -16,6 +18,35 @@ export default defineConfig({
   markdown: {
     lineNumbers: true
   },
+  // 生成 sitemap.xml
+  sitemap: {
+    hostname: SITE.hostname
+  },
+  // canonical 链接 + Open Graph / Twitter Card，供爬虫和社交分享使用
+  transformHead({ page, pageData }) {
+    let path = page.replace(/\.md$/, '')
+    if (path === 'index') path = ''
+    else if (path.endsWith('/index')) path = `${path.slice(0, -'/index'.length)}/`
+
+    const url = `${SITE.hostname}/${path}`
+    const title = pageData.frontmatter.title || pageData.title
+    const description = pageData.frontmatter.description || pageData.description
+    const image = `${SITE.hostname}/og-image.png`
+
+    return [
+      ['link', { rel: 'canonical', href: url }],
+      ['meta', { property: 'og:type', content: 'website' }],
+      ['meta', { property: 'og:site_name', content: 'BearCookie' }],
+      ['meta', { property: 'og:url', content: url }],
+      ['meta', { property: 'og:title', content: title }],
+      ['meta', { property: 'og:description', content: description }],
+      ['meta', { property: 'og:image', content: image }],
+      ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+      ['meta', { name: 'twitter:title', content: title }],
+      ['meta', { name: 'twitter:description', content: description }],
+      ['meta', { name: 'twitter:image', content: image }]
+    ]
+  },
   themeConfig: {
     siteTitle: 'BearCookie',
     nav: [
@@ -27,16 +58,9 @@ export default defineConfig({
       { text: 'Gitee', link: 'https://gitee.com/xg-zhang' },
       { text: 'GitHub', link: 'https://github.com/xgzzz' }
     ],
+    // 扫描 docs/posts/ 自动生成，新增文章无需改这里
     sidebar: [
-      {
-        text: '文章',
-        items: [
-          { text: '全部文章', link: '/posts/' },
-          { text: '从零搭建 VitePress 博客', link: '/posts/build-vitepress-blog' },
-          { text: 'Hello World', link: '/posts/hello-world' },
-          { text: '用 VitePress 写博客', link: '/posts/vitepress-blog' }
-        ]
-      },
+      ...createPostsSidebar(),
       {
         text: '关于',
         items: [{ text: '关于我', link: '/about' }]

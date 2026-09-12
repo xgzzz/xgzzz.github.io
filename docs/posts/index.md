@@ -5,8 +5,9 @@ aside: false
 
 # 全部文章
 
-- [从零搭建 VitePress 博客并自动部署](/posts/build-vitepress-blog) — 2026-09-12
-- [Hello World](/posts/hello-world) — 2026-09-11
-- [用 VitePress 写博客](/posts/vitepress-blog) — 2026-09-11
+<PostList />
 
-> 新增文章时，在 `docs/posts/` 下建一个 `.md` 文件，然后在这里补一行链接即可。
+::: tip 新增文章只需一步
+在 `docs/posts/` 下新建一个 `.md`，写好 `title` 和 `date` 即可。
+这里的列表和左侧边栏都是构建时自动生成的，不用再手动改任何配置。
+:::
