@@ -1,6 +1,8 @@
 import { defineConfig } from 'vitepress'
 import tailwindcss from '@tailwindcss/vite'
+import footnote from 'markdown-it-footnote'
 import { createPostsSidebar } from './utils/posts'
+import { slugify } from './utils/slugify'
 import { SITE } from './site.config'
 
 // 部署在根路径（如 https://xxx.edgeone.dev/）时保持 base: '/'
@@ -16,7 +18,14 @@ export default defineConfig({
     ['meta', { name: 'theme-color', content: '#3451b2' }]
   ],
   markdown: {
-    lineNumbers: true
+    lineNumbers: true,
+    // 中文标题锚点转拼音，避免 URL 里出现一串 %E4%B8%AD...
+    anchor: { slugify },
+    // 图片原生懒加载
+    image: { lazyLoading: true },
+    config: (md) => {
+      md.use(footnote)
+    }
   },
   // 生成 sitemap.xml
   sitemap: {
@@ -31,7 +40,7 @@ export default defineConfig({
     const url = `${SITE.hostname}/${path}`
     const title = pageData.frontmatter.title || pageData.title
     const description = pageData.frontmatter.description || pageData.description
-    const image = `${SITE.hostname}/og-image.png`
+    const image = `${SITE.hostname}/og-image.jpg`
 
     return [
       ['link', { rel: 'canonical', href: url }],
@@ -61,6 +70,13 @@ export default defineConfig({
     // 扫描 docs/posts/ 自动生成，新增文章无需改这里
     sidebar: [
       ...createPostsSidebar(),
+      {
+        text: '整理',
+        items: [
+          { text: '归档', link: '/archive' },
+          { text: '标签', link: '/tags' }
+        ]
+      },
       {
         text: '关于',
         items: [{ text: '关于我', link: '/about' }]

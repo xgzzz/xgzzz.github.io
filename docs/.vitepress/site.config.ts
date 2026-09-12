@@ -5,6 +5,9 @@ export const SITE = {
   /** 站点正式访问地址，用于 sitemap / canonical / og:url。末尾不要带斜杠 */
   hostname: 'https://xgzzz.github.io',
 
+  /** 作者名，显示在文末版权声明 */
+  author: 'BearCookie',
+
   /**
    * Giscus 评论（基于 GitHub Discussions，免费无广告）
    *
