@@ -4,7 +4,7 @@ layout: home
 hero:
   name: BearCookie
   text: 记录学习与思考
-  tagline: VitePress + Gitee + GitHub Pages，零成本上线
+  tagline: VitePress + Gitee + GitHub Pages，零成本上线6666
   actions:
     - theme: brand
       text: 开始阅读
