@@ -3,7 +3,9 @@ import { onMounted, watch, nextTick } from 'vue'
 import { useData } from 'vitepress'
 
 /**
- * 代码块增强：语言标签 + 一键复制 + 长代码块折叠
+ * 代码块增强：语言标签 + 长代码块折叠
+ *
+ * 注：不再注入复制按钮，避免与浏览器扩展自带的复制功能重复。
  *
  * 文章正文是 markdown 渲染出来的，没法直接在 md 里写组件，
  * 所以这里在挂载后操作 DOM。路由切换后 DOM 会重建，需要重新处理。
@@ -33,33 +35,6 @@ function enhance() {
       label.textContent = langClass.replace('language-', '')
       block.appendChild(label)
     }
-
-    // 一键复制
-    const copyBtn = document.createElement('button')
-    copyBtn.className = 'code-copy'
-    copyBtn.type = 'button'
-    copyBtn.textContent = '复制'
-    copyBtn.addEventListener('click', async () => {
-      const code = block.querySelector('code')?.textContent ?? ''
-      try {
-        await navigator.clipboard.writeText(code)
-      } catch {
-        // 非 HTTPS 或旧浏览器下回退
-        const textarea = document.createElement('textarea')
-        textarea.value = code
-        document.body.appendChild(textarea)
-        textarea.select()
-        document.execCommand('copy')
-        textarea.remove()
-      }
-      copyBtn.textContent = '已复制'
-      copyBtn.classList.add('copied')
-      setTimeout(() => {
-        copyBtn.textContent = '复制'
-        copyBtn.classList.remove('copied')
-      }, 1600)
-    })
-    block.appendChild(copyBtn)
 
     // 长代码块折叠
     const pre = block.querySelector('pre')

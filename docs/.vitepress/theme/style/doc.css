@@ -92,39 +92,6 @@
   opacity: 1;
 }
 
-/* 复制按钮 */
-.code-copy {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  padding: 4px 10px;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 6px;
-  background-color: var(--vp-c-bg);
-  color: var(--vp-c-text-2);
-  font-size: 12px;
-  line-height: 1.5;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.25s ease, color 0.25s ease, border-color 0.25s ease;
-}
-
-.vp-doc div[class*='language-']:hover .code-copy,
-.code-copy:focus-visible {
-  opacity: 1;
-}
-
-.code-copy:hover {
-  color: var(--vp-c-brand-1);
-  border-color: var(--vp-c-brand-1);
-}
-
-.code-copy.copied {
-  color: var(--vp-c-brand-1);
-  border-color: var(--vp-c-brand-1);
-  opacity: 1;
-}
-
 /* 长代码块折叠 */
 .code-block--collapsed {
   max-height: 340px;
@@ -220,6 +187,7 @@ a.post-tag:hover {
   border-color: var(--vp-c-brand-1);
   background-color: var(--vp-c-brand-soft);
 }
+
 
 /* ---------- 文章卡片（相关文章 / 归档） ---------- */
 .post-card {
