@@ -22,7 +22,7 @@ features:
   - title: Markdown 写作
     details: 文章就是 .md 文件，写完 push 一下，网站自动更新。
   - title: 零成本
-    details: 源码放 Gitee 与 GitHub，构建发布交给 GitHub Actions，一分钱不花。
+    details: 源码放GitHub，构建发布交给 GitHub Actions，一分钱不花。
   - title: 全文搜索
     details: 站内本地搜索，不依赖任何第三方服务，完全离线可用。
 ---

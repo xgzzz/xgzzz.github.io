@@ -24,7 +24,7 @@ tags:
 - Giscus 评论（基于 GitHub Discussions，免费无广告）
 - SEO：sitemap、canonical、Open Graph 分享卡片
 - 访问统计
-- 源码同时托管 Gitee 与 GitHub
+- 源码同时托管GitHub
 
 **技术栈**：VitePress 1.6 · Vue 3 · Vite 5 · TypeScript · Tailwind CSS v4 · Node.js 22 · GitHub Actions
 
@@ -154,7 +154,7 @@ layout: home
 hero:
   name: BearCookie
   text: 记录学习与思考
-  tagline: VitePress + Gitee + GitHub Pages，零成本上线
+  tagline: VitePress + GitHub Pages，零成本上线
   actions:
     - theme: brand
       text: 开始阅读

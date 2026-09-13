@@ -6,7 +6,7 @@ title: 关于我
 
 ## 这个站点
 
-用 [VitePress](https://vitepress.dev) 搭建，源码托管在 Gitee 与 GitHub，构建产物发布到 GitHub Pages。
+用 [VitePress](https://vitepress.dev) 搭建，源码托管在GitHub，构建产物发布到 GitHub Pages。
 
 - 文章写在 `docs/posts/` 下，一个 Markdown 就是一篇
 - 推送到 `master` 后，GitHub Actions 自动构建并发布
