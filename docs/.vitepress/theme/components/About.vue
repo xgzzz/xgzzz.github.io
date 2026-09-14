@@ -30,7 +30,7 @@ const profile = {
   ],
   timeline: [
     { time: '2026', title: '搭起 BearCookie 博客', desc: 'VitePress + GitHub Actions + Pages，零成本上线。' },
-    { time: '2025', title: '开始系统学习前端', desc: '从 HTML/CSS 到 Vue 工程化，边学边做。' }
+    { time: '202x', title: '开始码农之路', desc: '都学一点都做一点。' }
   ]
 }
 
