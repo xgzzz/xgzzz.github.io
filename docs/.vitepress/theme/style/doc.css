@@ -189,6 +189,17 @@ a.post-tag:hover {
 }
 
 
+/* ---------- 列表项 / 卡片链接的下划线 ----------
+   VitePress 的 `.vp-doc a` 带了 text-decoration: underline，优先级 (0,1,1)；
+   而 `.post-card` / `.post-tag` 里自己写的 `text-decoration: none` 只有 (0,1,0)，
+   会被它盖掉。结果就是 /posts/ 的列表行、归档和标签页的卡片、标签胶囊上，
+   标题文字下面都会多一条下划线。这里用 (0,2,1) 的选择器统一去掉。 */
+.vp-doc a.post-list-item,
+.vp-doc a.post-card,
+.vp-doc a.post-tag {
+  text-decoration: none;
+}
+
 /* ---------- 文章卡片（相关文章 / 归档） ---------- */
 .post-card {
   display: block;
