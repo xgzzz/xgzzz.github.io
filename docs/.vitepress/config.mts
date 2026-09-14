@@ -30,6 +30,66 @@ export default defineConfig({
       'script',
       {},
       `(function(){try{if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;var d=document.documentElement,c=['home-anim','reveal-anim'];for(var i=0;i<c.length;i++)d.classList.add(c[i]);setTimeout(function(){for(var i=0;i<c.length;i++)d.classList.remove(c[i])},3000)}catch(e){}})()`
+    ],
+    // 部署后自愈。
+    //
+    // GitHub Pages 给 HTML 的缓存是 10 分钟，而每次重新部署会把上一版带哈希的
+    // 资源文件删掉（已验证：旧 style.xxx.css 返回 404）。所以刚部署完刷新时，
+    // 浏览器可能还在用缓存的旧 HTML，它引用的资源已经不存在了，页面就会残缺
+    // （样式丢失 / 客户端脚本加载失败），等缓存过期或手动清缓存才恢复。
+    //
+    // 这里只处理「已经坏了」的情况：样式表加载失败、或者动态 import 报错时，
+    // 刷新一次（等同于 F5，会重新校验 HTML，从而拿到新版本）。
+    // 用 sessionStorage 打标记防止死循环，正常访问完全不受影响。
+    [
+      'script',
+      {},
+      `(function(){
+  var KEY = 'vp-reload-after-deploy';
+
+  function read() {
+    try { return sessionStorage.getItem(KEY); } catch (e) { return null; }
+  }
+
+  function write(on) {
+    try {
+      if (on) sessionStorage.setItem(KEY, '1');
+      else sessionStorage.removeItem(KEY);
+    } catch (e) {}
+  }
+
+  /** 同源的样式表加载失败时 link.sheet 是 null */
+  function broken() {
+    try {
+      return [].slice
+        .call(document.querySelectorAll('link[rel="stylesheet"]'))
+        .some(function (link) {
+          return link.href.indexOf(location.origin) === 0 && !link.sheet;
+        });
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function recover() {
+    // 这一轮已经刷过了就放弃，避免刷新死循环
+    if (read()) return;
+    write(true);
+    location.reload();
+  }
+
+  addEventListener('vite:preloadError', function (e) {
+    e.preventDefault();
+    recover();
+  });
+
+  addEventListener('DOMContentLoaded', function () {
+    // 这里只判断「有没有坏」：坏了就刷一次；
+    // 正常加载完则把标记清掉，留给下一次部署自愈用。
+    if (broken()) recover();
+    else write(false);
+  });
+})()`
     ]
   ],
   markdown: {
