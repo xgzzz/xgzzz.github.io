@@ -325,3 +325,58 @@ html.theme-transition * {
 .vp-doc .footnote-ref a {
   text-decoration: none;
 }
+
+/* ============================================================
+   首页英雄区 / feature 卡片
+   配合 HomeAnimation.vue 的 GSAP 开场动画
+   ============================================================ */
+
+/* 动画就绪前先把英雄区藏起来。
+   首屏 HTML 是全亮的，等 GSAP 装好再重播会「闪一下」，所以由 config.mts 的
+   内联脚本在首次绘制前挂上 .home-anim，组件建好时间轴后在同一帧摘掉；
+   内联脚本里另有 3s 兜底。prefers-reduced-motion 下不会挂这个类。 */
+html.home-anim .VPHomeHero .main,
+html.home-anim .VPHomeHero .image,
+html.home-anim .VPFeatures .item {
+  opacity: 0;
+}
+
+/* 滚动揭示的目标同理，先藏住等 GSAP 接手（配合 ScrollReveal.vue）。
+   这里的选择器要和 ScrollReveal.vue 里的 TARGET_SELECTOR 对齐，
+   否则会出现「藏住了但没人放开」，内容一直空着。 */
+html.reveal-anim .post-list-item,
+html.reveal-anim .post-card,
+html.reveal-anim .post-tag,
+html.reveal-anim .about .card {
+  opacity: 0;
+}
+
+/* 插画背后的柔光。
+   VitePress 默认是 none，这里补一个跟随主题色（深浅色自动切换）的光晕，
+   正好给 GSAP 的缩放入场和呼吸动画当载体。
+   doc.css 在默认主题之后加载，这条声明会覆盖 vars.css 里的默认值。 */
+:root {
+  --vp-home-hero-image-background-image: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--vp-c-brand-1) 60%, transparent) 0%,
+    color-mix(in srgb, var(--vp-c-brand-2) 24%, transparent) 44%,
+    transparent 72%
+  );
+  --vp-home-hero-image-filter: blur(36px);
+}
+
+/* 插画投影，让熊猫在光晕上有浮起来的感觉 */
+.VPHomeHero .image-src {
+  filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.16));
+}
+
+/* feature 卡片：默认主题只在卡片带链接时给边框变色，
+   这里补一点抬升和阴影，和文章卡片（.post-card:hover）保持同一套手感 */
+.VPFeatures .item .VPFeature {
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.VPFeatures .item:hover .VPFeature {
+  transform: translateY(-3px);
+  box-shadow: var(--vp-shadow-2);
+}

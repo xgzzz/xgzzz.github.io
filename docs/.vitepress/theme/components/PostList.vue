@@ -16,7 +16,7 @@ import { data as posts } from '../posts.data'
       v-for="post in posts"
       :key="post.url"
       :href="post.url"
-      class="group flex items-baseline justify-between gap-4 border-b border-border py-3 transition last:border-b-0 hover:border-brand"
+      class="post-list-item group flex items-baseline justify-between gap-4 border-b border-border py-3 transition last:border-b-0 hover:border-brand"
     >
       <span class="text-[15px] font-medium text-text1 transition group-hover:text-brand">
         {{ post.title }}

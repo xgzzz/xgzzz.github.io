@@ -16,7 +16,21 @@ export default defineConfig({
   lastUpdated: true,
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
-    ['meta', { name: 'theme-color', content: '#3451b2' }]
+    ['meta', { name: 'theme-color', content: '#3451b2' }],
+    // GSAP 动画由 HomeAnimation.vue / ScrollReveal.vue 在客户端接管。
+    // 首屏 HTML 里这些内容是全亮的，等 JS 到位再重播会「闪一下」，
+    // 所以在首次绘制前先挂上隐藏类把它们藏住（样式见 theme/style/doc.css）：
+    //   .home-anim   → 首页英雄区和 feature 卡片
+    //   .reveal-anim → 列表行、卡片、标签、关于页卡片
+    // 组件把动画起始值写进行内样式后，会在同一帧摘掉对应的类。
+    // 3s 定时器是兜底：万一 GSAP 没加载成功，也不会让内容一直空着。
+    // prefers-reduced-motion 下直接不藏。
+    // 类名必须和 theme/utils/animation.ts 里的 PENDING_*_CLASS 保持一致。
+    [
+      'script',
+      {},
+      `(function(){try{if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;var d=document.documentElement,c=['home-anim','reveal-anim'];for(var i=0;i<c.length;i++)d.classList.add(c[i]);setTimeout(function(){for(var i=0;i<c.length;i++)d.classList.remove(c[i])},3000)}catch(e){}})()`
+    ]
   ],
   markdown: {
     lineNumbers: true,
