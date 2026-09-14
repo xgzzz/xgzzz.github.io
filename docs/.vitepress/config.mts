@@ -104,6 +104,10 @@ export default defineConfig({
         ]
       },
       {
+        text: '打卡',
+        items: [{ text: '小刘', link: '/daka/xiaoliu' }]
+      },
+      {
         text: '关于',
         items: [{ text: '关于我', link: '/about' }]
       }
