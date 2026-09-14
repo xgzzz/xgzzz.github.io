@@ -2,6 +2,7 @@ import { h } from 'vue'
 import DefaultTheme from 'vitepress/theme'
 import type { Theme } from 'vitepress'
 import About from './components/About.vue'
+import DakaBoard from './components/DakaBoard.vue'
 import TwShowcase from './components/TwShowcase.vue'
 import JianpuEditor from './components/JianpuEditor.vue'
 import PostList from './components/PostList.vue'
@@ -39,6 +40,7 @@ export default {
   },
   enhanceApp({ app }) {
     app.component('About', About)
+    app.component('DakaBoard', DakaBoard)
     app.component('TwShowcase', TwShowcase)
     app.component('JianpuEditor', JianpuEditor)
     app.component('PostList', PostList)
