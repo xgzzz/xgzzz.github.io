@@ -1,6 +1,10 @@
 ---
 title: 用 VitePress 写博客
 date: 2026-09-11
+# 暂时下架：不进列表 / 归档 / 标签 / 侧边栏，也不进站内搜索和 sitemap。
+# 页面本身仍会构建（直接访问 URL 还能打开），想重新上架把这两行删掉即可。
+hidden: true
+search: false
 tags:
   - VitePress
   - 建站

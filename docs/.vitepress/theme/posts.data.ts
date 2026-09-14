@@ -48,6 +48,9 @@ export default createContentLoader('posts/*.md', {
     return raw
       // posts/index.md 是列表页本身，排除掉
       .filter(({ url }) => url !== '/posts/')
+      // frontmatter 里标了 hidden: true 的文章不进任何列表：
+      // 文章列表、归档、标签、相关文章、文末元信息都读这份数据
+      .filter(({ frontmatter }) => !frontmatter.hidden)
       .map(({ url, frontmatter, src }) => {
         const text = src ? stripMarkdown(src) : ''
         const wordCount = countWords(text)

@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 import tailwindcss from '@tailwindcss/vite'
 import footnote from 'markdown-it-footnote'
-import { createPostsSidebar } from './utils/posts'
+import { createPostsSidebar, getHiddenPostSlugs } from './utils/posts'
 import { slugify } from './utils/slugify'
 import { SITE } from './site.config'
 
@@ -44,7 +44,18 @@ export default defineConfig({
   },
   // 生成 sitemap.xml
   sitemap: {
-    hostname: SITE.hostname
+    hostname: SITE.hostname,
+    // frontmatter 里标了 hidden: true 的文章不进 sitemap
+    // （页面本身仍然构建，只是不给搜索引擎入口）
+    transformItems: (items) => {
+      const hidden = getHiddenPostSlugs()
+      if (!hidden.length) return items
+
+      // item.url 是相对路径，cleanUrls 下既没有 .html 也没有前导斜杠，
+      // 例如 "posts/hello-world"
+      const hiddenPaths = new Set(hidden.map((slug) => `posts/${slug}`))
+      return items.filter((item) => !hiddenPaths.has(item.url.replace(/^\/+/, '')))
+    }
   },
   // canonical 链接 + Open Graph / Twitter Card，供爬虫和社交分享使用
   transformHead({ page, pageData }) {

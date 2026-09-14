@@ -9,6 +9,9 @@ import { fileURLToPath } from 'node:url'
  * 注意：扫描发生在 config 加载时。dev 模式下新增 .md 后，
  * 需要重启 dev server 才能在侧边栏看到它（文章列表不受影响，它走
  * data loader，支持热更新）。生产构建每次都重新加载 config，无此问题。
+ *
+ * frontmatter 里标了 `hidden: true` 的文章会被跳过：不上侧边栏、列表、
+ * 归档、标签，也不进 sitemap。页面本身仍然构建，只是没有任何入口。
  */
 
 const postsDir = fileURLToPath(new URL('../../posts', import.meta.url))
@@ -34,28 +37,47 @@ export interface PostItem {
   date: string
 }
 
-/** 读取全部文章（不含 index.md），按日期倒序 */
-export function getPosts(): PostItem[] {
-  const files = fs
+interface PostFile {
+  slug: string
+  frontmatter: Record<string, string>
+}
+
+/** 扫描 docs/posts/，顺带解析 frontmatter，剔除列表页 index.md */
+function readPostFiles(): PostFile[] {
+  return fs
     .readdirSync(postsDir)
     .filter((file) => file.endsWith('.md') && file !== 'index.md')
+    .map((file) => ({
+      slug: file.replace(/\.md$/, ''),
+      frontmatter: parseFrontmatter(fs.readFileSync(path.join(postsDir, file), 'utf-8'))
+    }))
+}
 
-  const posts = files.map((file) => {
-    const raw = fs.readFileSync(path.join(postsDir, file), 'utf-8')
-    const frontmatter = parseFrontmatter(raw)
-    const slug = file.replace(/\.md$/, '')
+/** frontmatter 里写了 hidden: true 的文章不下架也不上站 */
+function isHidden(frontmatter: Record<string, string>): boolean {
+  return frontmatter.hidden === 'true'
+}
 
-    return {
+/** 读取全部可展示的文章，按日期倒序 */
+export function getPosts(): PostItem[] {
+  return readPostFiles()
+    .filter(({ frontmatter }) => !isHidden(frontmatter))
+    .map(({ slug, frontmatter }) => ({
       text: frontmatter.title || slug,
       link: `/posts/${slug}`,
       date: frontmatter.date || ''
-    }
-  })
+    }))
+    .sort((a, b) => {
+      if (a.date !== b.date) return a.date < b.date ? 1 : -1
+      return a.text.localeCompare(b.text)
+    })
+}
 
-  return posts.sort((a, b) => {
-    if (a.date !== b.date) return a.date < b.date ? 1 : -1
-    return a.text.localeCompare(b.text)
-  })
+/** 被隐藏文章的 slug，供 sitemap 过滤用 */
+export function getHiddenPostSlugs(): string[] {
+  return readPostFiles()
+    .filter(({ frontmatter }) => isHidden(frontmatter))
+    .map(({ slug }) => slug)
 }
 
 /** 生成「文章」分组的侧边栏 */
