@@ -338,6 +338,31 @@ html.theme-transition * {
 }
 
 /* ============================================================
+   打卡页（/daka/xiaoliu）
+   ============================================================ */
+
+/* 这页没有大标题，VitePress 默认的上下留白（上 48px、下 128px）显得空。
+   这里收窄一些：上 24px、下 48px。
+   同时覆盖 VitePress 的三段式写法——960px 以上底部留白是挂在 .content 上的，
+   小于 960px 则挂在 .VPDoc 上，两边都要改。
+   带上 .Layout.daka-page 前缀是为了压过 VitePress 的 scoped 样式（同优先级时
+   文档顺序也占优，这里用更明确的选择器更保险）。 */
+.Layout.daka-page .VPDoc {
+  padding-top: 24px;
+  padding-bottom: 48px;
+}
+
+@media (min-width: 960px) {
+  .Layout.daka-page .VPDoc {
+    padding-bottom: 0;
+  }
+
+  .Layout.daka-page .content {
+    padding-bottom: 48px;
+  }
+}
+
+/* ============================================================
    首页英雄区 / feature 卡片
    配合 HomeAnimation.vue 的 GSAP 开场动画
    ============================================================ */

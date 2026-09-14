@@ -1,6 +1,8 @@
 ---
 title: 小刘
 aside: false
+# 给 <div class="Layout"> 加个钩子类，用来单独收窄这页的上下留白（见 style/doc.css）
+pageClass: daka-page
 ---
 
 <script setup>
