@@ -34,9 +34,24 @@ irm get.scoop.sh | iex
 
 **4.** 看到 `Scoop was installed successfully!` 的绿色提示，就说明装好了。
 
-## 自定义安装路径（可选）
+> 如果第 3 步报网络错误（国内网络很常见），直接看文末 [遇到的问题记录](#yu-dao-de-wen-ti-ji-lu) 里的 Gitee 镜像安装脚本。
 
-C 盘紧张的话，可以在安装前设置环境变量指定目录。
+## 自定义安装路径（建议先设置）
+
+**这一步建议在装 Scoop 之前就做**，原因是：Scoop 会把**每个软件的本体都装到 Scoop 目录下的 `apps` 子目录**里。装完一批软件后，目录大概是这个结构：
+
+```text
+D:\Scoop\
+├── apps\        ← 所有软件的本体，一个软件一个目录（体积主要占在这）
+├── buckets\     ← 软件仓库（main / extras 等）
+├── cache\       ← 下载缓存，用久了会很大，可定期 scoop cache rm *
+├── persist\     ← 需要长期保留的配置数据（不受版本更新影响）
+└── shims\       ← 命令行入口，软链到 apps 里的可执行文件
+```
+
+不指定的话默认路径是 `C:\Users\你的用户名\scoop`，之后每次 `scoop install` 都在往 C 盘堆东西——像 JDK、Node、Python 这类动辄几百 MB 的装几个就很可观了。
+
+而且**装完再改比较麻烦**：环境变量一改，已经装好的软件就找不着了，得重装或者手动迁移。所以第一次安装时顺手指定好最省事。
 
 **1. 以管理员身份**打开 PowerShell，设置环境变量（把 `D:\Scoop` 换成你要的路径）：
 
@@ -44,9 +59,15 @@ C 盘紧张的话，可以在安装前设置环境变量指定目录。
 [Environment]::SetEnvironmentVariable('SCOOP', 'D:\Scoop', 'User')
 ```
 
-> 如果需要全局安装（供所有用户使用），可以额外设置 `SCOOP_GLOBAL` 变量。
+> 需要"全局安装"（`scoop install -g`，供所有用户使用）的话，额外设置 `SCOOP_GLOBAL` 变量，全局软件会装到它指向的目录下。
 
 **2.** 关掉当前窗口，**重新打开一个普通用户的 PowerShell**，再执行上面的安装命令。Scoop 会自动识别 `SCOOP` 变量，装到你指定的位置。
+
+**确认装到哪了**：
+
+```powershell
+$env:SCOOP          # 输出你设置的路径；为空说明走默认，软件会进 C 盘
+```
 
 ## 配置国内镜像源（推荐）
 
@@ -105,7 +126,36 @@ Scoop 默认不允许在管理员权限下安装。换一个**普通用户权限
 
 **`irm get.scoop.sh` 执行失败**
 
-多半是访问不了 GitHub。可以先设置代理，或手动下载安装脚本后执行。
+多半是访问不了 GitHub。可以先设置代理，或手动下载安装脚本后执行。具体报错和替代方案见下面一节。
+
+## 遇到的问题记录
+
+### `irm get.scoop.sh | iex` 报"基础连接已经关闭"
+
+**现象**：执行安装命令时如下报错，Scoop 装不上：
+
+```text
+PS C:\Users\你的用户名> Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+PS C:\Users\你的用户名> irm get.scoop.sh | iex
+irm : 基础连接已经关闭: 接收时发生错误。
+所在位置 行:1 字符: 1
++ irm get.scoop.sh | iex
++ ~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (System.Net.HttpWebRequest:HttpWebRequest) [Invoke-RestMethod]，WebException
+    + FullyQualifiedErrorId : WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand
+```
+
+**原因**：安装脚本托管在 GitHub，国内访问常常不稳定，TLS 连接会在传输中途被掐断，PowerShell 就报这个错。注意执行策略那条命令是成功了的，**问题出在下载，不在权限**。
+
+**解决**：改用社区维护的 **Gitee 镜像安装脚本**：
+
+```powershell
+irm https://gitee.com/happy-peter/InstallScoop/raw/master/install.ps1 | iex
+```
+
+装好之后，别忘了再按前面「[配置国内镜像源](#pei-zhi-guo-nei-jing-xiang-yuan-tui-jian)」那节把软件源也换成 Gitee，否则后面 `scoop install` 还是会去 GitHub 拉，一样会卡。
+
+> 其他可选办法：挂代理后再跑原命令；或者用浏览器打开 `https://get.scoop.sh` 把脚本存成 `.ps1` 后本地执行。
 
 ## 小结
 
