@@ -24,5 +24,7 @@ export const range = {
 
 export const records: DakaRecord[] = [
   { date: '2026-09-14' },
-  { date: '2026-09-15' }
+  { date: '2026-09-15' },
+  { date: '2026-09-16' },
+  { date: '2026-09-17' }
 ]
