@@ -100,7 +100,7 @@ const today = ref<Date | null>(null)
 const index = ref(0)
 const dir = ref<'left' | 'right'>('right')
 const showWorkdays = ref(true)
-const autoPlay = ref(false)
+const autoPlay = ref(true)
 const panelOpen = ref(false)
 
 /** 已解析出下一次日期的节日，按日期从近到远排序 */
