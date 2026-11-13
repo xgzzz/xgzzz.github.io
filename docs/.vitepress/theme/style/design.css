@@ -1,0 +1,145 @@
+/* ============================================================
+   设计令牌与页面骨架
+   ------------------------------------------------------------
+   全站共用的一套圆角 / 容器 / 间距，避免各页面各写一套数值。
+   新增页面优先复用这里的变量和类，不要重新发明。
+   ============================================================ */
+
+:root {
+  /* 圆角：小元素 / 卡片 / 大块 */
+  --bc-radius-sm: 8px;
+  --bc-radius-md: 14px;
+  --bc-radius-lg: 20px;
+
+  /* 容器：宽（工具页）/ 窄（文章正文） */
+  --bc-container: 1000px;
+  --bc-container-narrow: 780px;
+
+  /* 页面头部 */
+  --bc-head-top: 36px;
+  --bc-head-bottom: 22px;
+
+  /* 卡片 */
+  --bc-card-border: 1px solid var(--vp-c-divider);
+  --bc-card-shadow: 0 14px 30px -20px rgba(0, 0, 0, 0.45);
+
+  --bc-ease: 0.25s ease;
+}
+
+/* ---------- 页面骨架 ---------- */
+
+/* 非文章页（layout: page）的内容容器。
+   与文章页保持一致的左右留白，避免工具页比文章页宽出一大截。 */
+.bc-shell {
+  width: 100%;
+  max-width: var(--bc-container);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* 页面顶部标题区：所有非文章页共用同一套字号与间距 */
+.bc-head {
+  padding-top: var(--bc-head-top);
+  padding-bottom: var(--bc-head-bottom);
+}
+
+.bc-title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--vp-c-text-1);
+}
+
+.bc-desc {
+  max-width: 620px;
+  margin: 10px 0 0;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--vp-c-text-2);
+}
+
+.bc-meta {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--vp-c-text-3);
+}
+
+/* 工具类页面：标题与居中的内容同轴 */
+.bc-head--center {
+  text-align: center;
+}
+
+.bc-head--center .bc-desc {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* 工具页根容器，保证底部有足够留白 */
+.bc-page {
+  padding-bottom: 56px;
+}
+
+/* ---------- 文章类页面的页面级说明文字 ----------
+   标题本身的字号层级在 typography.css 里统一维护。
+   注意：VitePress 的 h1 包在 .vp-doc 内层 div 里，不能用 > 直接子选择器。 */
+.vp-doc h1 + p:not([class]) {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--vp-c-text-2);
+}
+
+/* ---------- 文章卡片网格 ---------- */
+
+.post-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 720px) {
+  .post-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- 统一卡片外观 ---------- */
+
+.bc-card {
+  border: var(--bc-card-border);
+  border-radius: var(--bc-radius-md);
+  background-color: var(--vp-c-bg-soft);
+  transition: border-color var(--bc-ease), transform var(--bc-ease),
+    box-shadow var(--bc-ease);
+}
+
+/* ---------- 统计条（首页 / 列表页共用） ---------- */
+
+.bc-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--vp-c-text-3);
+}
+
+.bc-stats > span {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.bc-stats b {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+  font-variant-numeric: tabular-nums;
+}
+
+.bc-stats .bc-sep {
+  color: var(--vp-c-divider);
+}

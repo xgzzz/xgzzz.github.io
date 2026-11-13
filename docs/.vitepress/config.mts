@@ -144,16 +144,19 @@ export default defineConfig({
   },
   themeConfig: {
     siteTitle: 'BearCookie',
+    // 导航按「读文章 → 翻索引 → 用工具 → 了解我」排列。
+    // GitHub 用右上角的图标（socialLinks），不再占一个文字项；
+    // /demo 是开发用的 Tailwind 示例页，保留页面但不放进导航。
     nav: [
       { text: '首页', link: '/' },
       { text: '文章', link: '/posts/' },
-      { text: '关于', link: '/about' },
-      // Tailwind 示例页，照着写完新页面后可以把这一项和 docs/demo.md 一起删掉
-      { text: '示例', link: '/demo' },
+      { text: '归档', link: '/archive' },
+      { text: '标签', link: '/tags' },
       { text: '在线小工具', link: '/tools' },
       { text: '倒计时', link: '/countdown' },
-      { text: 'GitHub', link: 'https://github.com/xgzzz' }
+      { text: '关于', link: '/about' }
     ],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/xgzzz' }],
     // 扫描 docs/posts/ 自动生成，新增文章无需改这里
     sidebar: [
       ...createPostsSidebar(),

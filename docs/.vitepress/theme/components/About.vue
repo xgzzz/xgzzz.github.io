@@ -127,8 +127,8 @@ function icon(key: string) {
 }
 
 .card {
-  border: 1px solid var(--vp-c-border);
-  border-radius: 16px;
+  border: var(--bc-card-border);
+  border-radius: var(--bc-radius-lg);
   background: var(--vp-c-bg-soft);
   overflow: hidden;
   transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;

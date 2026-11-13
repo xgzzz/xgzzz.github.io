@@ -6,6 +6,7 @@ import DakaBoard from './components/DakaBoard.vue'
 import TwShowcase from './components/TwShowcase.vue'
 import JianpuEditor from './components/JianpuEditor.vue'
 import Countdown from './components/Countdown.vue'
+import HomeLatestPosts from './components/HomeLatestPosts.vue'
 import PostList from './components/PostList.vue'
 import PostFooter from './components/PostFooter.vue'
 import ArticleMeta from './components/ArticleMeta.vue'
@@ -17,6 +18,10 @@ import HomeAnimation from './components/HomeAnimation.vue'
 import ScrollReveal from './components/ScrollReveal.vue'
 // 必须在 DefaultTheme 之后引入，Tailwind 才能覆盖默认主题样式
 import './style/tailwind.css'
+// 设计令牌与页面骨架（圆角 / 容器 / 页面头）
+import './style/design.css'
+// 正文排版（中文优先的字号层级、段落节奏、引用 / 表格）
+import './style/typography.css'
 // 文章页增强样式，依赖上面的加载顺序
 import './style/doc.css'
 
@@ -45,6 +50,7 @@ export default {
     app.component('TwShowcase', TwShowcase)
     app.component('JianpuEditor', JianpuEditor)
     app.component('Countdown', Countdown)
+    app.component('HomeLatestPosts', HomeLatestPosts)
     app.component('PostList', PostList)
     app.component('Archive', Archive)
     app.component('TagList', TagList)

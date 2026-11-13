@@ -26,3 +26,5 @@ features:
   - title: 全文搜索
     details: 站内本地搜索，不依赖任何第三方服务，完全离线可用。
 ---
+
+<HomeLatestPosts />

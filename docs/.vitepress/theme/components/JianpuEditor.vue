@@ -288,7 +288,7 @@ async function copyScript() {
 </script>
 
 <template>
-  <section class="vp-tw mx-auto max-w-7xl px-6 pb-10 text-text1">
+  <section class="vp-tw bc-shell pb-10 text-text1">
     <details class="rounded-2xl border border-border bg-bg-soft">
       <summary
         class="flex cursor-pointer list-none flex-wrap items-center justify-between gap-2 px-4 py-3 sm:px-6"

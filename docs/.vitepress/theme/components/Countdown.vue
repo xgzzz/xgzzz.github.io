@@ -328,8 +328,8 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   padding: 34px 52px;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 18px;
+  border: var(--bc-card-border);
+  border-radius: var(--bc-radius-lg);
   background: var(--vp-c-bg-soft);
   box-shadow: var(--vp-shadow-2);
   overflow: hidden;

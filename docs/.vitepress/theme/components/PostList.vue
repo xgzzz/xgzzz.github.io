@@ -2,26 +2,42 @@
 import { data as posts } from '../posts.data'
 
 /**
- * 文章列表由 posts.data.ts 在构建时自动生成，
- * 新增文章只要往 docs/posts/ 里丢 .md，这里和侧边栏都会自动更新。
+ * 全部文章列表。
  *
- * 颜色类写在内层 span 上：外层的 a 会命中 .vp-doc a 的样式，
- * 直接写在 a 上会被覆盖。
+ * 与归档、标签页共用同一套 .post-card 视觉和 .post-grid 网格，
+ * 避免同样内容的列表在不同页面长得不一样。
+ *
+ * 数据由 posts.data.ts 在构建时生成，新增文章无需改这里。
  */
 </script>
 
 <template>
-  <div class="mt-2">
+  <p class="bc-stats">
+    <span>共 <b>{{ posts.length }}</b> 篇</span>
+    <template v-if="posts.length">
+      <span class="bc-sep">/</span>
+      <span>最近更新 <b>{{ posts[0].date }}</b></span>
+    </template>
+  </p>
+
+  <div class="post-grid">
     <a
       v-for="post in posts"
       :key="post.url"
       :href="post.url"
-      class="post-list-item group flex items-baseline justify-between gap-4 border-b border-border py-3 transition last:border-b-0 hover:border-brand"
+      class="post-card post-list-item"
     >
-      <span class="text-[15px] font-medium text-text1 transition group-hover:text-brand">
-        {{ post.title }}
-      </span>
-      <span class="shrink-0 font-mono text-[13px] text-text3">{{ post.date }}</span>
+      <div class="post-card-title">{{ post.title }}</div>
+
+      <p v-if="post.excerpt" class="post-card-excerpt">{{ post.excerpt }}</p>
+
+      <div class="post-card-meta">
+        {{ post.date }} · 约 {{ post.readingTime }} 分钟<template
+          v-if="post.tags.length"
+        >
+          · {{ post.tags.slice(0, 3).join(' / ') }}</template
+        >
+      </div>
     </a>
   </div>
 </template>
