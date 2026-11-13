@@ -5,6 +5,7 @@ import About from './components/About.vue'
 import DakaBoard from './components/DakaBoard.vue'
 import TwShowcase from './components/TwShowcase.vue'
 import JianpuEditor from './components/JianpuEditor.vue'
+import Countdown from './components/Countdown.vue'
 import PostList from './components/PostList.vue'
 import PostFooter from './components/PostFooter.vue'
 import ArticleMeta from './components/ArticleMeta.vue'
@@ -43,6 +44,7 @@ export default {
     app.component('DakaBoard', DakaBoard)
     app.component('TwShowcase', TwShowcase)
     app.component('JianpuEditor', JianpuEditor)
+    app.component('Countdown', Countdown)
     app.component('PostList', PostList)
     app.component('Archive', Archive)
     app.component('TagList', TagList)

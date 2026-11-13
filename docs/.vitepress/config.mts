@@ -151,6 +151,7 @@ export default defineConfig({
       // Tailwind 示例页，照着写完新页面后可以把这一项和 docs/demo.md 一起删掉
       { text: '示例', link: '/demo' },
       { text: '在线小工具', link: '/tools' },
+      { text: '倒计时', link: '/countdown' },
       { text: 'GitHub', link: 'https://github.com/xgzzz' }
     ],
     // 扫描 docs/posts/ 自动生成，新增文章无需改这里
@@ -211,6 +212,22 @@ export default defineConfig({
     }
   },
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    // 本地开发服务器。
+    //
+    // Vite 默认端口 5173，如果启动时报
+    //   EACCES: permission denied ::1:5173
+    // 说明这个端口被 Hyper-V（WSL2 / Docker 会随机保留一段端口）
+    // 排除了。被保留时换 host 到 127.0.0.1 也没用 —— IPv4 和 IPv6
+    // 的排除范围是同一份，可以再跑一次下面这条确认：
+    //   netsh int ipv6 show excludedportrange protocol=tcp
+    //
+    // 这里换成保留范围外的端口；未开 strictPort，万一再被占用，
+    // Vite 会自动顺延到下一个可用端口（看启动日志里的实际地址）。
+    // 需要手机 / 局域网访问时把 host 改成 true。
+    server: {
+      host: '127.0.0.1',
+      port: 5499
+    }
   }
 })
